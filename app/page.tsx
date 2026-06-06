@@ -57,11 +57,12 @@ export default function Page() {
   const [user, setUser] = useState<User | null>(null)
 
   async function chargerDonnees() {
-    const [{ data: shopsData }, { data: annoncesData }, { data: postsData }] = await Promise.all([
-      supabase.from("shops").select("*"),
-      supabase.from("annonces").select("*").eq("actif", true),
-      supabase.from("posts").select("*").order("created_at", { ascending: false })
-    ])
+    const [{ data: shopsData }, { data: annoncesData }, { data: postsData }] =
+      await Promise.all([
+        supabase.from("shops").select("*"),
+        supabase.from("annonces").select("*").eq("actif", true),
+        supabase.from("posts").select("*").order("created_at", { ascending: false })
+      ])
     if (shopsData) setShops(shopsData)
     if (annoncesData) setAnnonces(annoncesData)
     if (postsData) setPosts(postsData)
@@ -103,7 +104,9 @@ export default function Page() {
     return feed
   }
 
-  const tousLesTags = [...new Set(shops.flatMap(s => s.tags ? s.tags.split(",") : []))]
+  const tousLesTags = [...new Set(shops.flatMap(s =>
+    s.tags ? s.tags.split(",") : []
+  ))]
   const feed = buildFeed()
 
   if (chargement) {
@@ -122,7 +125,8 @@ export default function Page() {
       <div style={{ display: "flex", justifyContent: "space-between",
         alignItems: "center", marginBottom: "20px" }}>
         <h1
-          style={{ fontSize: "22px", fontWeight: "700", cursor: "pointer", letterSpacing: "-0.5px" }}
+          style={{ fontSize: "22px", fontWeight: "700",
+            cursor: "pointer", letterSpacing: "-0.5px" }}
           onClick={() => setVue("feed")}
         >
           Arti<span style={{ color: "#B5540A" }}>sphère</span>
@@ -200,7 +204,7 @@ export default function Page() {
         />
       )}
 
-      {/* Vue dashboard annonces */}
+      {/* Vue booster */}
       {vue === "booster" && user && (
         <DashboardAnnonces userId={user.id} />
       )}
@@ -229,12 +233,16 @@ export default function Page() {
       {/* Vue feed */}
       {vue === "feed" && (
         <>
-          <Stories shops={shops} />
+          <Stories
+            shops={shops}
+            onAjouterStory={() => user ? setVue("story") : setVue("auth")}
+          />
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
             <button
               onClick={() => setFiltre(null)}
-              style={{ padding: "5px 12px", borderRadius: "20px", border: "1px solid #ccc",
+              style={{ padding: "5px 12px", borderRadius: "20px",
+                border: "1px solid #ccc",
                 background: filtre === null ? "#B5540A" : "white",
                 color: filtre === null ? "white" : "#666",
                 cursor: "pointer", fontSize: "13px" }}
@@ -245,7 +253,8 @@ export default function Page() {
               <button
                 key={tag}
                 onClick={() => setFiltre(tag === filtre ? null : tag)}
-                style={{ padding: "5px 12px", borderRadius: "20px", border: "1px solid #ccc",
+                style={{ padding: "5px 12px", borderRadius: "20px",
+                  border: "1px solid #ccc",
                   background: filtre === tag ? "#B5540A" : "white",
                   color: filtre === tag ? "white" : "#666",
                   cursor: "pointer", fontSize: "13px" }}

@@ -8,9 +8,10 @@ type Shop = {
 
 type Props = {
   shops: Shop[]
+  onAjouterStory?: () => void
 }
 
-export default function Stories({ shops }: Props) {
+export default function Stories({ shops, onAjouterStory }: Props) {
   const emojis: { [key: string]: string } = {
     "Maroquinerie": "👜", "Menuiserie": "🪵", "Céramique": "🏺",
     "Alimentaire": "🍞", "Bijouterie": "💎", "Bien-être": "🕯️",
@@ -27,7 +28,13 @@ export default function Stories({ shops }: Props) {
       scrollbarWidth: "none",
     }}>
       {/* Bouton ajouter story */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", flexShrink: 0 }}>
+      
+      <div 
+      onClick={() => {
+  console.log("clic story", onAjouterStory)
+  onAjouterStory && onAjouterStory()
+}}
+      style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", flexShrink: 0 }}>
         <div style={{
           width: "56px", height: "56px", borderRadius: "50%",
           background: "#F0EAE2", display: "flex", alignItems: "center",
