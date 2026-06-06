@@ -5,7 +5,11 @@ import AjouterBoutique from "./AjouterBoutique"
 import Auth from "./Auth"
 import Annonce from "./Annonce"
 import DashboardAnnonces from "./DashboardAnnonces"
+import Stories from "./Stories"
 import { supabase } from "./supabase"
+import Navbar from "./Navbar"
+import Explorer from "./Explorer"
+import Profil from "./Profil"
 
 type Shop = {
   id: number
@@ -34,7 +38,7 @@ export default function Page() {
   const [annonces, setAnnonces] = useState<AnnonceType[]>([])
   const [filtre, setFiltre] = useState<string | null>(null)
   const [chargement, setChargement] = useState(true)
-  const [vue, setVue] = useState<"feed" | "ajouter" | "auth" | "booster">("feed")
+  const [vue, setVue] = useState<"feed" | "explorer" | "ajouter" | "auth" | "booster" | "profil">("feed")
   const [user, setUser] = useState<User | null>(null)
 
   async function chargerDonnees() {
@@ -60,7 +64,6 @@ export default function Page() {
     setVue("feed")
   }
 
-  // Injection des annonces dans le feed — 1 toutes les 8 boutiques
   function buildFeed() {
     const shopsFiltres = filtre
       ? shops.filter(s => s.tags && s.tags.includes(filtre))
@@ -75,8 +78,7 @@ export default function Page() {
 
     shopsFiltres.forEach((shop, i) => {
       feed.push(shop)
-      // Toutes les 3 boutiques, on insère une annonce
-      if ((i + 1) % 3 === 0 && annonceIndex < annoncesActives.length) {
+      if ((i + 1) % 8 === 0 && annonceIndex < annoncesActives.length) {
         feed.push({ ...annoncesActives[annonceIndex], isAnnonce: true })
         annonceIndex++
       }
@@ -89,7 +91,11 @@ export default function Page() {
   const feed = buildFeed()
 
   if (chargement) {
-    return <main style={{ padding: "20px" }}>Chargement...</main>
+    return (
+      <main style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+        <div style={{ fontSize: "14px", color: "#888" }}>Chargement...</div>
+      </main>
+    )
   }
 
   return (
@@ -97,12 +103,10 @@ export default function Page() {
 
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <h1 style={{
-  fontSize: "22px", fontWeight: "700", cursor: "pointer",
-  letterSpacing: "-0.5px"
-}} onClick={() => setVue("feed")}>
-  Arti<span style={{ color: "#B5540A" }}>sphère</span>
-</h1>
+        <h1 style={{ fontSize: "22px", fontWeight: "700", cursor: "pointer", letterSpacing: "-0.5px" }}
+          onClick={() => setVue("feed")}>
+          Arti<span style={{ color: "#B5540A" }}>sphère</span>
+        </h1>
         <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
           {user ? (
             <>
@@ -151,6 +155,20 @@ export default function Page() {
       {vue === "auth" && (
         <Auth onConnecte={(u: User) => { setUser(u); setVue("feed") }} />
       )}
+      {vue === "explorer" && (
+  <Explorer
+    shops={shops}
+    onFiltreHashtag={(tag: string) => { setFiltre(tag); setVue("feed") }}
+  />
+        )}
+       {vue === "profil" && (
+  <Profil
+    user={user}
+    shops={shops}
+    onConnexion={() => setVue("auth")}
+    onDeconnexion={handleDeconnexion}
+  />
+)} 
 
       {/* Vue formulaire ajout boutique */}
       {vue === "ajouter" && user && <AjouterBoutique />}
@@ -161,6 +179,10 @@ export default function Page() {
       {/* Vue feed */}
       {vue === "feed" && (
         <>
+          {/* Stories */}
+          <Stories shops={shops} />
+
+          {/* Hashtags */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
             <button
               onClick={() => setFiltre(null)}
@@ -185,12 +207,14 @@ export default function Page() {
             ))}
           </div>
 
+          {/* Compteur */}
           <p style={{ fontSize: "13px", color: "#888", marginBottom: "16px" }}>
             {shops.length} boutique{shops.length > 1 ? "s" : ""}
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {feed.map((item, i) => (
+          {/* Feed */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingBottom: "80px" }}>
+            {feed.map((item) => (
               "isAnnonce" in item ? (
                 <Annonce
                   key={"annonce-" + item.id}
@@ -210,7 +234,11 @@ export default function Page() {
           </div>
         </>
       )}
-
+      <Navbar
+        vue={vue}
+        onNavigate={(v) => setVue(v)}
+        connecte={user !== null}
+      />
     </main>
   )
 }
