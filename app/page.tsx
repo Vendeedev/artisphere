@@ -93,13 +93,16 @@ export default function Page() {
   }
 
   return (
-    <main style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+    <main style={{ padding: "16px", maxWidth: "480px", margin: "0 auto", minHeight: "100vh" }}>
 
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <h1 style={{ fontSize: "24px", fontWeight: "500", cursor: "pointer" }} onClick={() => setVue("feed")}>
-          Artisphère
-        </h1>
+        <h1 style={{
+  fontSize: "22px", fontWeight: "700", cursor: "pointer",
+  letterSpacing: "-0.5px"
+}} onClick={() => setVue("feed")}>
+  Arti<span style={{ color: "#B5540A" }}>sphère</span>
+</h1>
         <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
           {user ? (
             <>
