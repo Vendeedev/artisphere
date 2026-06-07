@@ -19,7 +19,7 @@ export default function NouvelleStory({ userId, boutique_nom, onStoryPubliee }: 
 
     setChargement(true)
 
-    // Expire dans 24h
+    // Calcul expiration 24h
     const expireAt = new Date()
     expireAt.setHours(expireAt.getHours() + 24)
 
@@ -27,7 +27,7 @@ export default function NouvelleStory({ userId, boutique_nom, onStoryPubliee }: 
       .from("stories")
       .insert([{
         user_id: userId,
-        boutique_nom,
+        boutique_nom: boutique_nom,
         photo_url: photoUrl,
         expire_at: expireAt.toISOString()
       }])
